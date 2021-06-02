@@ -321,7 +321,7 @@ We then join numeric data to the main dataset of electoral data.
 
 ```{r}
 
-# We pivot the data to get the income and ed
+# We pivot the data to get the income and edu data
 pivoted_income = eld_income %>% select(-"pop_in_000") %>% pivot_wider(names_from = inc_level, values_from = pct) 
 pivoted_edu = eld_edu %>% select(-"pop_in_000") %>% pivot_wider(names_from = edu_level, values_from = pct)
 
@@ -338,263 +338,9 @@ Now that we have a completed and cleaned datasaet at the electoral boundary leve
 
 ## Visualization
 
-## R Shiny Development 
-
-# Results (if a Dashboard, insert screenshots of key selections)
-
-# Discussion of Results/Findings/Main Highlights
-
-# Limitations, Future Work, Conclusion
-
-
-## Setting up the Files
-
-
-
-Let us plot fist load the files into our project:
-```{r }
-eld <- st_read("data/elections/eld.shp")
-planning <- st_read("data/planning/MP14_PLNG_AREA_WEB_PL.shp") 
-glimpse(eld)
-glimpse(planning)
-```
-
-Setting CRS:
-```{r}
-planning <- st_transform(planning, st_crs(eld))
-```
-
-
-We can just map out to visually see the maps. First, the election bounds map: 
-```{r}
-tmap_mode("plot")
-map_elections = tm_shape(eld) + tm_fill() + tm_borders() + tm_polygons("Name", legend.show= F) + tm_text("Name", size = 1/3)
-map_elections + tm_layout(title = "Election Bounds")
-```
-
-```{r}
-map_planning = tm_shape(planning) + tm_fill() + tm_borders() + tm_polygons("PLN_AREA_N", legend.show= F) + tm_text("PLN_AREA_N", size = 1/3)
-map_planning + tm_layout(title = "Planning Areas")
-```
-
-```{r}
-
-#Some formatting 
-
-sixtysix_colors <- list(
-  red="#D0445E",
-  blue="#0077E0",
-  purple="#C92EC4",
-  green="#009871",
-  orange="#9C7200",
-  grey="#009871",
-  light_red="#EE6178"
-)
-
-theme_map_sixtysix <- function(){ 
-  ggthemes::theme_map() %+replace%
-    theme(
-      text = ggthemes::theme_fivethirtyeight()$text,
-      title = ggthemes::theme_fivethirtyeight()$plot.title,
-      panel.grid.major = element_line(color="grey90")
-    )
-}
-
-theme_map_sixtysix <- function(){ 
-  ggthemes::theme_map() %+replace%
-    theme(
-      text = ggthemes::theme_fivethirtyeight()$text,
-      title = ggthemes::theme_fivethirtyeight()$plot.title,
-      panel.grid.major = element_line(color="grey90")
-    )
-}
-```
-
-Mapping the two on top of each other: 
-
-```{r}
-#divs 16 = eld
-
-ggplot(
-  eld
-  ) +
-    geom_sf(
-    color = sixtysix_colors$light_red,
-    size=1, 
-    fill=NA
-  ) + 
-  geom_text(
-    aes(x=X, y=Y, label = ED_CODE),
-    data = with(
-      eld,
-      data.frame(ED_CODE, st_centroid(geometry) %>% st_coordinates())
-    ),
-    color=sixtysix_colors$light_red,
-    size=4,
-    fontface="bold"
-  ) +
-  geom_sf(
-    data=planning,
-    color = "black",
-    size=1,
-    fill=NA
-  ) +
-  geom_text(
-    aes(x=X, y=Y, label = PLN_AREA_C),
-    data = with(
-      planning,
-      data.frame(PLN_AREA_C, st_centroid(geometry) %>% st_coordinates())
-    ),
-    color="black",
-    size=4
-  ) +
-  scale_color_identity(guide=FALSE) +
-  theme_map_sixtysix() +
-  ggtitle("Election Boundaries (Red) vs \n Planning Areas (Black)")
-```
-
-Adopt Areal Weighting Methodology to construct crosswalks: 
-We want to obtain a data frame (our crosswalk) that tells us how many percent of the Planning Area data can be attributed to the electoral divisions. 
-
-```{r}
-areal_weights <- st_intersection(
-  st_make_valid(planning), 
-  st_make_valid(eld)
-  ) %>%
-  mutate(area = st_area(geometry)) %>%
-  as.data.frame() %>%
-  select(PLN_AREA_N, Name, area) %>% 
-  group_by(PLN_AREA_N) %>%
-  mutate(prop_of_pln = as.numeric(area / sum(area))
-  )
-```
-Let us do some exploration first and see what the crosswalk "means". 
-```{r}
-areal_weights %>% filter(Name == "HOLLAND-BUKIT TIMAH")
-```
-Here we see that to obtain data for the Holland-Bukit Timah constitutency (the electoral boundary I personally belong to), I would take 0.02552 of Bukit Batok's data, 0.81 of Bukit Panjang's, etc. We note that there are also some values in `prop_of_pln` that are very close to zero. These are areas that are probably very trivial (i.e. a very very small intersection) but we will still count them in our final data output for the sake of completeness. 
-
-```{r}
-crosswalk = 
-  areal_weights %>%
-  rename(eld_bounds = Name) %>%
-  rename(pln_area = PLN_AREA_N)
-
-write.csv(crosswalk, file="crosswalk.csv")
-#ELD bounds = electoral bounds
-```
-
-
-## Using the Crosswalk
-
-To use the crosswalk, we first have to load in a relevant dataset. What we will do is to load in a sample dataset, use the crosswalk once, and then produce a function that will allow us to replicate the calculations by just passing a relevant dataset. 
-
-### Input Income Dataset
-
-```{r}
-income_pln <- read_csv("data/raw/income.csv")
-```
-
-
-### Cleaning and Transforming the Income Dataset
-```{r}
-
-# Let's just keep the columns that we want and throw out the rest.
-clean_inc =
-income_pln %>%
-  select(level_1, level_3, value) %>% 
-  rename(breakdown = level_1) %>%
-  rename(pln_area = level_3)
-
-joined_income = 
-  left_join(clean_inc, crosswalk, by = "pln_area") %>% 
-  mutate(scaled = as.numeric(value * prop_of_pln))
-
-```
-Using the joined dataset, we group by breakdown (which is the "income level") and electoral bounds. We then sum up the "scaled" values per intersection (e.g. Planning Area 1 intersects with Election Bound A, Planning Area 2 intersects with Election Bound A), and then group by electoral bounds.
-```{r}
-test_income = 
-  joined_income %>% 
-  group_by(breakdown, eld_bounds) %>%
-  mutate(sum_eld = sum(scaled)) %>%
-  arrange(breakdown, eld_bounds)
-
-test_income 
-```
-
-To better understand this, let's just filter out a small proportion of the dataset to see what is going on.
-
-```{r}
-test_income %>% filter(eld_bounds == "HOLLAND-BUKIT TIMAH", breakdown == "$2,000 - $2,999")
-```
-This dataset tells us that within the Holland-Bukit Timah Constituency, the 'value' of those earning between $2,000 - $2,999 of income is 13.60. We will go into detail what these "values" mean later. 
-
-### Interpreting Values 
-
-Values in this case represent the number of people [Resident Working Persons Aged 15 Years and Over by Planning Area and Gross Monthly Income from Work, 2015], in thousands. What we want to do is to convert each value to a percentage of that election bounds's population. 
-
-First, we need to calculate the electoral bounds's total population (our denominator, if you will). 
-```{r}
-test_income %>% 
-  filter(breakdown == "Total")
-```
-To calculate Aljunied's total population, we will 'search up' Aljunied in `eld_bounds`, sum up the corresponding values in `sum_eld`, and then divide it by the number of rows in Aljunied. We can write a for loop to do that:
-
-```{r}
-total_income =
-test_income %>% 
-  filter(breakdown == "Total") %>%
-  group_by(eld_bounds) %>% 
-  summarise(pop_in_000 = mean(sum_eld)) ## Mean is the same as adding and then dividing!
-
-total_income
-```
-
-We can write a function that extracts the correct population value for that level. 
-
-```{r}
-## List of Levels
-inc_levels <- list('Below $1,000', 
-                   '$1,000 - $1,999',
-                   '$2,000 - $2,999', 
-                   '$3,000 - $3,999', 
-                   '$4,000 - $4,999',
-                   '$5,000 - $5,999', 
-                   '$6,000 - $6,999', 
-                   '$7,000 - $7,999', 
-                   '$8,000 - $8,999',
-                   '$9,000 - $9,999', 
-                   '$10,000 - $10,999', 
-                   '$11,000 - $11,999', 
-                   '$12,000 & Over'
-                   )
-```
-
-```{r}
-#Calculate each level of income as a percentage of total population
-income_value_pct <- function(level) {
-  test_income %>%
-    filter(breakdown == level) %>%
-    group_by(eld_bounds) %>% 
-    summarise(pop_in_000 = mean(sum_eld)) %>% 
-    mutate(pct = 100* (pop_in_000 / total_income$pop_in_000)) %>%
-    mutate(inc_level = level) # We include this so we know what we are looking at 
-}
-```
-
-```{r}
-eld_income <- lapply(inc_levels, income_value_pct) %>% bind_rows()
-eld_income
-```
-
 ### Visualizing Income Data
 
-Now that we have the consolidated income data by electoral bounds in the `eld_income` dataframe, we can begin some visualizations of the data. 
-
-First, let us generate some histograms. 
-
-To generate histograms, we need to "delimit" our eld_income dataset firstly by bounds. 
-
+We want to generate a bar chart that allows us to compare percentages of different income levels across boundaries, as shown.
 
 ```{r, fig.width=15, fig.height=15}
 
@@ -612,88 +358,11 @@ ggplot(eld_income, aes(fill=factor(inc_level, levels=rev(inc_levels)), y=pct, x=
   ylab("Percentage of Population") + labs(fill = "Income Levels") + coord_flip()
 ```
 
-### Input Education Dataset
-We do the same with the education dataset. 
-```{r}
-edu_pln <- read.csv("data/raw/edu_pln.csv")
-```
-
-```{r}
-
-# Let's just keep the columns that we want and throw out the rest.
-clean_edu =
-edu_pln %>%
-  select(level_1, level_3, value) %>% 
-  rename(breakdown = level_1) %>%
-  rename(pln_area = level_3)
-
-joined_edu = 
-  left_join(clean_edu, crosswalk, by = "pln_area") %>% 
-  mutate(scaled = as.numeric(value * prop_of_pln))
-
-```
-
-```{r}
-test_edu = 
-  joined_edu %>% 
-  group_by(breakdown, eld_bounds) %>%
-  mutate(sum_eld = sum(scaled)) %>%
-  arrange(breakdown, eld_bounds)
-
-test_edu 
-```
-
-
-### Interpreting Values 
-
-Values in this case represent the number of people in thousands and their respective highest education attained. We convert this to a percentage value of total population.  
-
-First, we need to calculate the electoral bounds's total population (our denominator, if you will). 
-
-```{r}
-total_edu =
-test_edu %>% 
-  filter(breakdown == "Total") %>%
-  group_by(eld_bounds) %>% 
-  summarise(pop_in_000 = mean(sum_eld)) ## Mean is the same as adding and then dividing!
-
-total_edu
-```
-
-We can write a function that extracts the correct population value for that level. 
-
-```{r}
-## List of Levels
-edu_levels <- list('No Qualification', 
-                   'Primary',
-                   'Lower Secondary', 
-                   'Secondary', 
-                   'Post-Secondary (Non-Tertiary)',
-                   'Polytechnic', 
-                   'Professional Qualification and Other Diploma', 
-                   'University'
-                   )
-```
-
-```{r}
-#Calculate each level of edu as a percentage of total population
-edu_value_pct <- function(level) {
-  test_edu %>%
-    filter(breakdown == level) %>%
-    group_by(eld_bounds) %>% 
-    summarise(pop_in_000 = mean(sum_eld)) %>% 
-    mutate(pct = 100* (pop_in_000 / total_edu$pop_in_000)) %>%
-    mutate(edu_level = level) # We include this so we know what we are looking at 
-}
-```
-
-```{r}
-eld_edu <- lapply(edu_levels, edu_value_pct) %>% bind_rows()
-eld_edu
-```
+The resulting image is: 
 
 ### Visualizing Education Data
 
+The same process works for the education data: 
 ```{r, fig.width=15, fig.height=15}
 #Make education barplot
 ggplot(eld_edu, aes(fill=factor(edu_level, levels=rev(edu_levels)), y=pct, x=eld_bounds)) + 
@@ -711,49 +380,16 @@ ggplot(eld_edu, aes(fill=factor(edu_level, levels=rev(edu_levels)), y=pct, x=eld
 
 ```
 
-We also import voting data. We express voting data in the column `vote_pap_pct`, which shows the percentage of the population that voted for the People's Action Party, who is the ruling party that contests in every single constitutency (electoral area). 
-```{r}
-voting <- read_csv("data/raw/voting.csv")
-voted_pap = voting %>% filter(year==2020, party=="PAP") %>% mutate(vote_pap_pct = as.numeric(vote_percentage) * 100) %>% select(constituency, vote_pap_pct) # Data from the 2020 Elections
-```
+The resulting image is: 
 
+### Combining Income and Education Data with Voting Data 
 
-Join numeric data to the main dataset of electoral data. 
-
-```{r}
-
-# We pivot the data to get the income and ed
-pivoted_income = eld_income %>% select(-"pop_in_000") %>% pivot_wider(names_from = inc_level, values_from = pct) 
-pivoted_edu = eld_edu %>% select(-"pop_in_000") %>% pivot_wider(names_from = edu_level, values_from = pct)
-
-eld_2 = eld %>% select(c("Name", "geometry")) # We make a copy of the Electoral Boundary file with the columns we want
-
-join_income_eld = inner_join(eld_2, pivoted_income, by=c("Name"='eld_bounds')) # We join income data to eld data first
-join_edu_data = inner_join(join_income_eld, pivoted_edu, by=c("Name"="eld_bounds")) # Join Edu Data with income Data
-eld_data = 
-  inner_join(join_edu_data, voted_pap, by=c("Name"="constituency")) %>%
-  mutate(across(where(is.numeric), round, 2)) #Round values
-
-# tibble(eld_data)
-# write.csv(eld_data, file="eld_data.csv")
-# write.csv(eld_income, file="eld_income.csv")
-# write_sf(eld_data, "eld_data.shp")
-
-```
-
-Now that we have a completed and cleaned datasaet at the electoral boundary level, we can begin to create some cartographical visuatlizations.
-
-Make Maps 
-
-First, we generate maps that show the percentage of the population that voted for the ruling People's Action Party. Before we do that, let us make some custom color palettes to visualize our data. 
+We also want to generate some cartographical visualizations. First, we generate maps that show the percentage of the population that voted for the ruling People's Action Party. Before we do that, let us make some custom color palettes to visualize our data. 
 
 ```{r}
 mypal <- c('#edf8fb', '#b3cde3', '#8c96c6','#8856a7','#810f7c')
 tmap_mode("plot")
-tm_shape(eld_data)  + tm_polygons("vote_pap_pct", title = "Percentage Voted for PAP", palette = mypal) + tm_borders() +  tm_text("Name", size = 1/3)
-```
-
-```{r}
+tm_shape(eld_data)  + tm_polygons("vote_pap_pct", title = "Percentage Voted for PAP in 2020 Elections", palette = mypal) + tm_borders() +  tm_text("Name", size = 1/3)
 tmap_mode("view")
 income_map = 
   tm_shape(eld_data) + tm_text("Name", size = 1/1.3) + tm_borders(lwd = 2) + 
@@ -777,9 +413,10 @@ income_map =
 
 tmap_leaflet(income_map, show = TRUE, add.titles=TRUE)
 ```
+This gives us this income map: 
 
+For education, the same code with slight modifications: 
 ```{r}
-
 edu_map = 
   tm_shape(eld_data) + tm_text("Name", size = 1/1.3) + tm_borders(lwd = 2) + 
   tm_polygons("vote_pap_pct", title = "Percentage Voted for PAP",
@@ -796,10 +433,12 @@ edu_map =
                 ) + tm_layout(title="Highest Edu Qualification (2015) and PAP Vote Share (2020)")
 
 tmap_leaflet(edu_map, show = TRUE, add.titles=TRUE)
-
 ```
+This gives us this education map:
 
-We take the visualizations a step further by creating an R Shiny app that allows us to view the data in a centralized fashion. The R Shiny App should allow us to compare data in an interactive manner at the electoral boundary level between electoral boundaries.
+## R Shiny Development 
+
+We take the visualizations a step further by creating an R Shiny app that allows us to view the data in a centralized fashion. The R Shiny App should allow us to compare data in an interactive manner at the electoral boundary level between electoral boundaries. The file can be found in `shiny_gis3.R`, but it is embedded inline in the `crosswalk-r.rmd` file. The code is replicated below: 
 
 ```{r, echo=FALSE}
 shinyApp(
@@ -953,6 +592,25 @@ shinyApp(
   })
 },
 
-  options = list(height = 500)
+  options = list(height = 800)
 )
 ```
+
+# Results (if a Dashboard, insert screenshots of key selections)
+
+This is how the R Shiny App looks like. 
+
+We can select which variables we want to compare: 
+
+
+We can view data on income level. 
+
+We can view data on education level. 
+
+We can view the maps, with the popup that highlights income/education level against percentage voted for the People's Action Party. 
+
+# Discussion of Results/Findings/Main Highlights
+
+# Limitations, Future Work, Conclusion
+
+

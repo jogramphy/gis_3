@@ -159,7 +159,7 @@ write.csv(crosswalk, file="crosswalk.csv")
 
 ## Using the Crosswalk
 
-To use the crosswalk, we first have to load in a relevant dataset. What we will do is to load in a sample dataset, use the crosswalk once, and then produce a function that will allow us to replicate the calculations by just passing a relevant dataset. 
+To use the crosswalk, we first have to load in a relevant dataset. We will work with 2 datasets; one that deals with gross income levels in 2015, and the other concerning the highest education qualification attained. Both are at the planning area level - we want to transpose them to the electoral planning level. 
 
 ### Input Income Dataset
 
@@ -170,7 +170,6 @@ income_pln <- read_csv("data/raw/income.csv")
 
 ### Cleaning and Transforming the Income Dataset
 ```{r}
-
 # Let's just keep the columns that we want and throw out the rest.
 clean_inc =
 income_pln %>%
@@ -390,7 +389,7 @@ voted_pap = voting %>% filter(year==2020, party=="PAP") %>% mutate(vote_pap_pct 
 ```
 
 
-Join numeric data to the main dataset of electoral data. 
+We then join numeric data to the main dataset of electoral data. 
 
 ```{r}
 
