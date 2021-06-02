@@ -26,6 +26,18 @@ Underlying the above goals and objectives, fundamental to the project is to deve
 
 # Methods Used (be explicit) 
 
+## ETL Framework 
+
+### Extract 
+We first want to extract and load the relevant datasets to our environment. Some of our files are in SHP, and some of them are in KMZ - we intend to standardize everything to SHP files. 
+ 
+
+## Crosswalk Formulation 
+
+## Visualization
+
+## R Shiny Development 
+
 # Results (if a Dashboard, insert screenshots of key selections)
 
 # Discussion of Results/Findings/Main Highlights
@@ -35,9 +47,7 @@ Underlying the above goals and objectives, fundamental to the project is to deve
 
 ## Setting up the Files
 
-Some of our files are in SHP, and some of them are in KMZ. What we want is to standardize everything to SHP files. 
 
-Due to the nature of our `gdal` installation, we are unable to read .kmz files, according to https://mitchellgritts.com/posts/load-kml-and-kmz-files-into-r/. We utilize https://mygeodata.cloud (an open source platform) to help us convert the data from kmz to shp for easier crosswalking calculations. 
 
 Let us plot fist load the files into our project:
 ```{r }
