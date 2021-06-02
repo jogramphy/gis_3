@@ -128,13 +128,213 @@ The resulting map:
 ## Crosswalk Formulation 
 A crosswalk is required for us to map data across "different levels of geographical aggregation". The crosswalk is essentially a list of weights that allows us to transpose data from one geographical aggregation to another. There are two approaches that we can adopt: Areal Weighting, and Population Weighting. 
 
-**Areal Weighting** involves proportioning values by land area. **Population weighting** involves proportioning values by population of people. We will utilize areal weighting for this project given and considering its context. Singapore as a country is that of high population density - and there really is not an explicit "rural" or "urban" divide that will make population weighting more useful than an areal one. 
+**Areal Weighting** involves proportioning values by land area. For example, if 50% of the Jurong electoral boundary is in Planning Area A, we give 50% of Planning Area A's values to Jurong, and regroup all of Jurong's value by sum subsequently.  **Population weighting** involves proportioning values by population of people. We will utilize areal weighting for this project given and considering its context. Singapore as a country is that of high population density - and there really is not an explicit "rural" or "urban" divide that will make population weighting more useful than an areal one. 
 
-A simple, common technique is to apportion values by area. We can calculate the area of each intersection, and give 2016’s votes to 2019 boundaries proportional to how much of its area lies in each (this is called “areal weighting”). We’ll reproject them to EPSG:2272 (the PA South State Plane) to get the most accurate areas:
+```{r}
+areal_weights <- st_intersection(
+  st_make_valid(planning), 
+  st_make_valid(eld)
+  ) %>%
+  mutate(area = st_area(geometry)) %>%
+  as.data.frame() %>%
+  select(PLN_AREA_N, Name, area) %>% 
+  group_by(PLN_AREA_N) %>%
+  mutate(prop_of_pln = as.numeric(area / sum(area))
+  )
+```
 
-I usually do one better than areal weighting: population weighting. Instead of calculating the area of the intersection, I calculate the population living in each intersection. We then apportion 2016 counts proportionally to the population in each boundary. For example, 2019’s 05-34 lies along the Delaware River, and includes a vast industrial region. It probably represents many fewer votes than its area would suggest. Instead of using the area of each population, we could use the population.
+Let us do some exploration first and see what the crosswalk "means". 
+```{r}
+areal_weights %>% filter(Name == "HOLLAND-BUKIT TIMAH")
+``` 
 
+| pln_area     | eld_bounds| area      | prop_of_pln |
+| ----------- | ----------- | ----------- | ----------- | 
+| BUKIT BATOK    | HOLLAND-BUKIT TIMAH        | 284209.813   | 0.025528053 |
+| BUKIT PANJANG    | HOLLAND-BUKIT TIMAH        | 7312727.286    | 0.810729970 |
+| BUKIT TIMAH    | HOLLAND-BUKIT TIMAH        | 13358327.473  | 0.762172615  |
 
+Here we see a snippet of the crosswalk. We see that to obtain data for the Holland-Bukit Timah constitutency (the electoral boundary I personally belong to), I would take 0.02552 of Bukit Batok's data, 0.81 of Bukit Panjang's, etc. We note that there are also some values in `prop_of_pln` that are very close to zero. These are areas that are probably very trivial (i.e. a very very small intersection) but we will still count them in our final data output for the sake of completeness. 
+
+```{r}
+crosswalk = 
+  areal_weights %>%
+  rename(eld_bounds = Name) %>%
+  rename(pln_area = PLN_AREA_N)
+
+write.csv(crosswalk, file="crosswalk.csv")
+```
+
+## Using the Crosswalk
+To use the crosswalk, we first have to load in a relevant dataset. We will work with 2 datasets; one that deals with gross income levels in 2015, and the other concerning the highest education qualification attained. Both are at the planning area level - we want to transpose them to the electoral planning level. 
+
+### Input and Clean Income Dataset
+```{r}
+income_pln <- read_csv("data/raw/income.csv")
+# Let's just keep the columns that we want and throw out the rest.
+
+clean_inc =
+income_pln %>%
+  select(level_1, level_3, value) %>% 
+  rename(breakdown = level_1) %>%
+  rename(pln_area = level_3)
+
+joined_income = 
+  left_join(clean_inc, crosswalk, by = "pln_area") %>% 
+  mutate(scaled = as.numeric(value * prop_of_pln))
+
+```
+Using the joined dataset, we group by breakdown (which is the "income level") and electoral bounds. We then sum up the "scaled" values per intersection (e.g. Planning Area 1 intersects with Election Bound A, Planning Area 2 intersects with Election Bound A), and then group by electoral bounds.
+```{r}
+test_income = 
+  joined_income %>% 
+  group_by(breakdown, eld_bounds) %>%
+  mutate(sum_eld = sum(scaled)) %>%
+  arrange(breakdown, eld_bounds)
+```
+
+To better understand this, let's just filter out a small proportion of the dataset to see what is going on.
+
+```{r}
+test_income %>% filter(eld_bounds == "HOLLAND-BUKIT TIMAH", breakdown == "$2,000 - $2,999")
+```
+
+This dataset tells us that within the Holland-Bukit Timah Constituency, the 'value' of those earning between $2,000 - $2,999 of income is 13.60. Values in this case represent the number of people [Resident Working Persons Aged 15 Years and Over by Planning Area and Gross Monthly Income from Work, 2015], in thousands. What we want to do is to convert each value to a percentage of that election bounds's population. 
+
+First, we need to calculate the electoral bounds's total population (our denominator, if you will). 
+```{r}
+test_income %>% 
+  filter(breakdown == "Total")
+```
+
+To calculate Aljunied's total population, we will 'search up' Aljunied in `eld_bounds`, sum up the corresponding values in `sum_eld`, and then divide it by the number of rows in Aljunied. 
+```{r}
+total_income =
+test_income %>% 
+  filter(breakdown == "Total") %>%
+  group_by(eld_bounds) %>% 
+  summarise(pop_in_000 = mean(sum_eld)) ## Mean is the same as adding and then dividing!
+  ```
+
+We can write a function that extracts the correct population value for that level. 
+
+```{r}
+## List of Levels
+inc_levels <- list('Below $1,000', 
+                   '$1,000 - $1,999',
+                   '$2,000 - $2,999', 
+                   '$3,000 - $3,999', 
+                   '$4,000 - $4,999',
+                   '$5,000 - $5,999', 
+                   '$6,000 - $6,999', 
+                   '$7,000 - $7,999', 
+                   '$8,000 - $8,999',
+                   '$9,000 - $9,999', 
+                   '$10,000 - $10,999', 
+                   '$11,000 - $11,999', 
+                   '$12,000 & Over'
+                   )
+
+#Calculate each level of income as a percentage of total population
+income_value_pct <- function(level) {
+  test_income %>%
+    filter(breakdown == level) %>%
+    group_by(eld_bounds) %>% 
+    summarise(pop_in_000 = mean(sum_eld)) %>% 
+    mutate(pct = 100* (pop_in_000 / total_income$pop_in_000)) %>%
+    mutate(inc_level = level) # We include this so we know what we are looking at 
+}
+
+eld_income <- lapply(inc_levels, income_value_pct) %>% bind_rows() %>% drop_na()
+```
+
+### Input and Clean Education Dataset
+We do the same with the education dataset. 
+```{r}
+edu_pln <- read.csv("data/raw/edu_pln.csv")
+
+# Let's just keep the columns that we want and throw out the rest.
+clean_edu =
+edu_pln %>%
+  select(level_1, level_3, value) %>% 
+  rename(breakdown = level_1) %>%
+  rename(pln_area = level_3)
+
+joined_edu = 
+  left_join(clean_edu, crosswalk, by = "pln_area") %>% 
+  mutate(scaled = as.numeric(value * prop_of_pln))
+
+test_edu = 
+  joined_edu %>% 
+  group_by(breakdown, eld_bounds) %>%
+  mutate(sum_eld = sum(scaled)) %>%
+  arrange(breakdown, eld_bounds)
+
+```
+
+Values in this case represent the number of people in thousands and their respective highest education attained. We convert this to a percentage value of total population.  First, we need to calculate the electoral bounds's total population (our denominator, if you will). 
+
+```{r}
+total_edu =
+test_edu %>% 
+  filter(breakdown == "Total") %>%
+  group_by(eld_bounds) %>% 
+  summarise(pop_in_000 = mean(sum_eld)) ## Mean is the same as adding and then dividing!
+
+```
+
+We can write a function that extracts the correct population value for that level. 
+
+```{r}
+## List of Levels
+edu_levels <- list('No Qualification', 
+                   'Primary',
+                   'Lower Secondary', 
+                   'Secondary', 
+                   'Post-Secondary (Non-Tertiary)',
+                   'Polytechnic', 
+                   'Professional Qualification and Other Diploma', 
+                   'University'
+                   )
+
+#Calculate each level of edu as a percentage of total population
+edu_value_pct <- function(level) {
+  test_edu %>%
+    filter(breakdown == level) %>%
+    group_by(eld_bounds) %>% 
+    summarise(pop_in_000 = mean(sum_eld)) %>% 
+    mutate(pct = 100* (pop_in_000 / total_edu$pop_in_000)) %>%
+    mutate(edu_level = level) # We include this so we know what we are looking at 
+}
+
+eld_edu <- lapply(edu_levels, edu_value_pct) %>% bind_rows() %>% drop_na()
+```
+### Input and Clean Voting Data
+
+We also import voting data. We express voting data in the column `vote_pap_pct`, which shows the percentage of the population that voted for the People's Action Party, who is the ruling party that contests in every single constitutency (electoral area). 
+```{r}
+voting <- read_csv("data/raw/voting.csv")
+voted_pap = voting %>% filter(year==2020, party=="PAP") %>% mutate(vote_pap_pct = as.numeric(vote_percentage) * 100) %>% select(constituency, vote_pap_pct) # Data from the 2020 Elections
+```
+
+We then join numeric data to the main dataset of electoral data. 
+
+```{r}
+
+# We pivot the data to get the income and ed
+pivoted_income = eld_income %>% select(-"pop_in_000") %>% pivot_wider(names_from = inc_level, values_from = pct) 
+pivoted_edu = eld_edu %>% select(-"pop_in_000") %>% pivot_wider(names_from = edu_level, values_from = pct)
+
+eld_2 = eld %>% select(c("Name", "geometry")) # We make a copy of the Electoral Boundary file with the columns we want
+
+join_income_eld = inner_join(eld_2, pivoted_income, by=c("Name"='eld_bounds')) # We join income data to eld data first
+join_edu_data = inner_join(join_income_eld, pivoted_edu, by=c("Name"="eld_bounds")) # Join Edu Data with income Data
+eld_data = 
+  inner_join(join_edu_data, voted_pap, by=c("Name"="constituency")) %>%
+  mutate(across(where(is.numeric), round, 2)) #Round values
+```
+
+Now that we have a completed and cleaned datasaet at the electoral boundary level, we can begin to create some cartographical visuatlizations.
 
 ## Visualization
 

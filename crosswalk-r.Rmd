@@ -422,7 +422,7 @@ First, we generate maps that show the percentage of the population that voted fo
 ```{r}
 mypal <- c('#edf8fb', '#b3cde3', '#8c96c6','#8856a7','#810f7c')
 tmap_mode("plot")
-tm_shape(eld_data)  + tm_polygons("vote_pap_pct", title = "Percentage Voted for PAP", palette = mypal) + tm_borders() +  tm_text("Name", size = 1/3)
+tm_shape(eld_data)  + tm_polygons("vote_pap_pct", title = "Percentage Voted for PAP in 2020 Elections", palette = mypal) + tm_borders() +  tm_text("Name", size = 1/3)
 ```
 
 ```{r}
