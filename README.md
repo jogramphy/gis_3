@@ -39,8 +39,11 @@ planning <- st_read("data/planning/MP14_PLNG_AREA_WEB_PL.shp")
 ```
 #### Visualizing the Shapefiles
 We map out the initial shapefiles to see what we are working with. We use the `tmap` package to help us do this. First, the Election Boundaries map: 
+
 ![image](https://user-images.githubusercontent.com/73069313/120545897-d4674780-c3b4-11eb-93fe-3d6fb2d9df6a.png)
+
 Secondly, the Planning Areas map: 
+
 ![image](https://user-images.githubusercontent.com/73069313/120546022-fd87d800-c3b4-11eb-9ff8-74a7f85b70a7.png)
 
 More importantly, what we want to do is to overlay one file on the other and see how it inersects. We follow the example outlined here (https://sixtysixwards.com/home/crosswalk-tutorial/) to help us do this. We first include some formatting instructions so that we can do the overlaying seamlessly. 
@@ -117,10 +120,21 @@ ggplot(
   ggtitle("Election Boundaries (Red) vs \n Planning Areas (Black)")
 ```
 
-The resulting map: ![image](https://user-images.githubusercontent.com/73069313/120546249-3d4ebf80-c3b5-11eb-8e5c-debed02bb361.png)
+The resulting map: 
+
+![image](https://user-images.githubusercontent.com/73069313/120546249-3d4ebf80-c3b5-11eb-8e5c-debed02bb361.png)
 
 
 ## Crosswalk Formulation 
+A crosswalk is required for us to map data across "different levels of geographical aggregation". The crosswalk is essentially a list of weights that allows us to transpose data from one geographical aggregation to another. There are two approaches that we can adopt: Areal Weighting, and Population Weighting. 
+
+**Areal Weighting** involves proportioning values by land area. **Population weighting** involves proportioning values by population of people. We will utilize areal weighting for this project given and considering its context. Singapore as a country is that of high population density - and there really is not an explicit "rural" or "urban" divide that will make population weighting more useful than an areal one. 
+
+A simple, common technique is to apportion values by area. We can calculate the area of each intersection, and give 2016’s votes to 2019 boundaries proportional to how much of its area lies in each (this is called “areal weighting”). We’ll reproject them to EPSG:2272 (the PA South State Plane) to get the most accurate areas:
+
+I usually do one better than areal weighting: population weighting. Instead of calculating the area of the intersection, I calculate the population living in each intersection. We then apportion 2016 counts proportionally to the population in each boundary. For example, 2019’s 05-34 lies along the Delaware River, and includes a vast industrial region. It probably represents many fewer votes than its area would suggest. Instead of using the area of each population, we could use the population.
+
+
 
 ## Visualization
 
