@@ -29,8 +29,6 @@ Let us plot fist load the files into our project:
 ```{r }
 eld <- st_read("data/elections/eld.shp")
 planning <- st_read("data/planning/MP14_PLNG_AREA_WEB_PL.shp") 
-glimpse(eld)
-glimpse(planning)
 ```
 
 Setting CRS:
@@ -43,17 +41,17 @@ We can just map out to visually see the maps. First, the election bounds map:
 ```{r}
 tmap_mode("plot")
 map_elections = tm_shape(eld) + tm_fill() + tm_borders() + tm_polygons("Name", legend.show= F) + tm_text("Name", size = 1/3)
-map_elections + tm_layout(title = "Election Bounds")
+map_elections + tm_layout(title = "General Election Bounds (2020)")
 ```
 
 ```{r}
 map_planning = tm_shape(planning) + tm_fill() + tm_borders() + tm_polygons("PLN_AREA_N", legend.show= F) + tm_text("PLN_AREA_N", size = 1/3)
-map_planning + tm_layout(title = "Planning Areas")
+map_planning + tm_layout(title = "Planning Areas (2015)")
 ```
 
 ```{r}
 
-#Some formatting 
+#Some formatting for overlaying 2 maps
 
 sixtysix_colors <- list(
   red="#D0445E",
@@ -87,7 +85,7 @@ theme_map_sixtysix <- function(){
 Mapping the two on top of each other: 
 
 ```{r}
-#divs 16 = eld
+#Creatihng overlapping maps
 
 ggplot(
   eld
@@ -257,7 +255,7 @@ income_value_pct <- function(level) {
 ```
 
 ```{r}
-eld_income <- lapply(inc_levels, income_value_pct) %>% bind_rows()
+eld_income <- lapply(inc_levels, income_value_pct) %>% bind_rows() %>% drop_na()
 eld_income
 ```
 
@@ -362,7 +360,7 @@ edu_value_pct <- function(level) {
 ```
 
 ```{r}
-eld_edu <- lapply(edu_levels, edu_value_pct) %>% bind_rows()
+eld_edu <- lapply(edu_levels, edu_value_pct) %>% bind_rows() %>% drop_na()
 eld_edu
 ```
 
@@ -627,6 +625,6 @@ shinyApp(
   })
 },
 
-  options = list(height = 500)
+  options = list(height = 1000)
 )
 ```
