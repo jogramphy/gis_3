@@ -1,3 +1,38 @@
+# Background, Motivation
+
+The 2015 General Election in Singapore was a landslide victory for the ruling People’s Action Party (PAP), which consolidated its political power by winning 83 out of 89 seats contested. This was a stark contrast to the 2011 General Elections, where it only attained 60% of all the votes — marking it the party’s worst ever performance since the country’s independence. It is in this project’s interest to be able to understand and visualize how key socio-economic factors such as level of education attained, as well as gross monthly income, can affect voting patterns, particularly within electoral boundaries in an election year. 
+
+However, what makes this visualization incrementally difficult is that Singapore does not publicize or share data categorized by electoral boundaries. Unlike American census data where one can aggregate tract level data to state level and visualize on a map election patterns across the country, Singapore does not have a similar data synthesis process. By virtue of being a city-state, the country is split into ‘planning areas’ by the Urban Redevelopment Authority (URA). Census information is collected at the planning area level, but these planning areas are not congruent with the electoral boundaries set in place by the Elections Department (ELD). This leads to our inability to map out differences in indicators across electoral boundaries. 
+
+
+# Goals and Objectives, Research Question (if relevant)
+
+I am interested in examining the spatial distribution of income and education within Singapore’s electoral boundaries, specifically in the 2020 General Elections. The final product will be an R Shiny App (a GIS dashboard, if you will) that allows the users to: 
+- View data tables about their electoral boundaries
+- Interact with a map that shows the distribution of income and education level across electoral boundaries 
+
+Underlying the above goals and objectives, fundamental to the project is to develop a framework to transpose the electoral boundaries to the boundaries of the Singapore Planning Areas. Developing such a framework will allow us to examine changes of electoral boundaries, the associated indicators across more dimensions such as time. The output for this will be a `crosswalk.csv` file that will allow future researchers to utilize. 
+
+# Data Sources, Spatial and Temporal Scale
+
+| Dataset Name      | File Type | Direct Link      | 
+| ----------- | ----------- | ----------- |
+| Electoral Boundary 2020      | KMZ       | https://data.gov.sg/dataset/electoral-boundary_2020       |
+| Master Plan 2014 Planning Area Boundary   | SHP        | https://data.gov.sg/dataset/master-plan-2014-planning-area-boundary-web?resource_id=2ab23cb2-b1a4-4b1a-a9e1-b9cad0ac159b |
+| Resident Population Aged 15 Years and Over by Planning Area and Highest Qualification Attained, 2015 | CSV       | https://data.gov.sg/dataset/resident-population-aged-15-years-and-over-by-planning-area-and-highest-qualification-attained-2015 |
+| Resident Working Persons Aged 15 Years and Over by Planning Area and Gross Monthly Income from Work, 2015 | CSV       | https://data.gov.sg/dataset/resident-working-persons-aged-15-years-over-by-planning-area-gross-monthly-income-from-work-2015 |
+| Parliamentary General Election Results, 2020 | CSV       | https://data.gov.sg/dataset/parliamentary-general-election-results |
+
+
+# Methods Used (be explicit) 
+
+# Results (if a Dashboard, insert screenshots of key selections)
+
+# Discussion of Results/Findings/Main Highlights
+
+# Limitations, Future Work, Conclusion
+
+
 ## Setting up the Files
 
 Some of our files are in SHP, and some of them are in KMZ. What we want is to standardize everything to SHP files. 
