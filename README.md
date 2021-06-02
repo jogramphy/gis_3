@@ -29,8 +29,96 @@ Underlying the above goals and objectives, fundamental to the project is to deve
 ## ETL Framework 
 
 ### Extract 
-We first want to extract and load the relevant datasets to our environment. Some of our files are in SHP, and some of them are in KMZ - we intend to standardize everything to SHP files. 
- 
+
+#### Loading the Shapefiles into our Environment
+We first want to extract and load the relevant datasets to our environment. Some of our files are in SHP, and some of them are in KMZ - we intend to standardize everything to SHP files. Due to the nature of our `gdal` installation, we are unable to read .kmz files, according to https://mitchellgritts.com/posts/load-kml-and-kmz-files-into-r/. We utilize https://mygeodata.cloud (an open source platform) to help us convert the data from kmz to shp for easier crosswalking calculations. 
+
+```{r }
+eld <- st_read("data/elections/eld.shp") # Electoral Boundaries File
+planning <- st_read("data/planning/MP14_PLNG_AREA_WEB_PL.shp") 
+```
+#### Visualizing the Shapefiles
+We map out the initial shapefiles to see what we are working with. We use the `tmap` package to help us do this. First, the Election Boundaries map: 
+![image](https://user-images.githubusercontent.com/73069313/120545897-d4674780-c3b4-11eb-93fe-3d6fb2d9df6a.png)
+Secondly, the Planning Areas map: 
+![image](https://user-images.githubusercontent.com/73069313/120546022-fd87d800-c3b4-11eb-9ff8-74a7f85b70a7.png)
+
+More importantly, what we want to do is to overlay one file on the other and see how it inersects. We follow the example outlined here (https://sixtysixwards.com/home/crosswalk-tutorial/) to help us do this. We first include some formatting instructions so that we can do the overlaying seamlessly. 
+
+```{r}
+sixtysix_colors <- list(
+  red="#D0445E",
+  blue="#0077E0",
+  purple="#C92EC4",
+  green="#009871",
+  orange="#9C7200",
+  grey="#009871",
+  light_red="#EE6178"
+)
+
+theme_map_sixtysix <- function(){ 
+  ggthemes::theme_map() %+replace%
+    theme(
+      text = ggthemes::theme_fivethirtyeight()$text,
+      title = ggthemes::theme_fivethirtyeight()$plot.title,
+      panel.grid.major = element_line(color="grey90")
+    )
+}
+
+theme_map_sixtysix <- function(){ 
+  ggthemes::theme_map() %+replace%
+    theme(
+      text = ggthemes::theme_fivethirtyeight()$text,
+      title = ggthemes::theme_fivethirtyeight()$plot.title,
+      panel.grid.major = element_line(color="grey90")
+    )
+}
+```
+Then, we map the 2 maps, one over the other. 
+
+```{r}
+#Creatihng overlapping maps
+
+ggplot(
+  eld
+  ) +
+    geom_sf(
+    color = sixtysix_colors$light_red,
+    size=1, 
+    fill=NA
+  ) + 
+  geom_text(
+    aes(x=X, y=Y, label = ED_CODE),
+    data = with(
+      eld,
+      data.frame(ED_CODE, st_centroid(geometry) %>% st_coordinates())
+    ),
+    color=sixtysix_colors$light_red,
+    size=4,
+    fontface="bold"
+  ) +
+  geom_sf(
+    data=planning,
+    color = "black",
+    size=1,
+    fill=NA
+  ) +
+  geom_text(
+    aes(x=X, y=Y, label = PLN_AREA_C),
+    data = with(
+      planning,
+      data.frame(PLN_AREA_C, st_centroid(geometry) %>% st_coordinates())
+    ),
+    color="black",
+    size=4
+  ) +
+  scale_color_identity(guide=FALSE) +
+  theme_map_sixtysix() +
+  ggtitle("Election Boundaries (Red) vs \n Planning Areas (Black)")
+```
+
+The resulting map: ![image](https://user-images.githubusercontent.com/73069313/120546249-3d4ebf80-c3b5-11eb-8e5c-debed02bb361.png)
+
 
 ## Crosswalk Formulation 
 
