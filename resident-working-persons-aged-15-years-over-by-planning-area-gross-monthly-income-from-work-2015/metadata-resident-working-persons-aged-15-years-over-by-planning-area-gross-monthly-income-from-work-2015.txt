@@ -1,0 +1,102 @@
+# Metadata for Resident Working Persons Aged 15 Years and Over by Planning Area and Gross Monthly Income from Work, 2015
+---
+Identifier: 'e2653afa-6f85-4c72-b2c7-c027b21ebfc3'
+Name: 'resident-working-persons-aged-15-years-over-by-planning-area-gross-monthly-income-from-work-2015'
+Title: 'Resident Working Persons Aged 15 Years and Over by Planning Area and Gross
+  Monthly Income from Work, 2015'
+Description:
+  - 'From 1995, the General Household Survey (GHS) is conducted in between 2 Population
+    Censuses as a mid-decade mini-Census.'
+  - ''
+  - 'The General Household Survey (GHS) 2015 is the third in the series of mid-decade
+    national survey. It covers a wide range of topics and provides comprehensive data
+    on Singapore’s population and households in between the population censuses that
+    are conducted once in ten years.'
+Topics:
+  - 'Society'
+Keywords:
+  - 'General Household Survey'
+  - 'Gross Monthly Income from Work'
+  - 'Planning Area'
+  - 'Resident Working Persons Aged 15 Years and Over'
+Publisher:
+  Name: 'Ministry of Trade and Industry - Department of Statistics'
+  Admin 1:
+    Name: 'SingStat Info'
+    Department: 'Statistics Information Services'
+    Email: 'info@singstat.gov.sg'
+Sources:
+  - 'Ministry of Trade and Industry - Department of Statistics'
+Source Url: 'http://www.tablebuilder.singstat.gov.sg/publicfacing/createSpecialTable.action?refId=8322&exportType=csv'
+License: 'https://data.gov.sg/open-data-licence'
+Frequency: 'Other'
+Coverage: '2015-01-01 to 2015-12-31'
+Last Updated: '2019-08-08T04:36:54.966464'
+Resources:
+  -
+    Identifier: 'eef4ea00-1d8d-435f-8eb8-5792c4f2d602'
+    Title: 'Resident Working Persons Aged 15 Yrs & Over by PA(Total) & Gross Monthly
+      Income From Work'
+    Url: 'https://storage.data.gov.sg/resident-working-persons-aged-15-years-over-by-planning-area-gross-monthly-income-from-work-2015/resources/resident-working-persons-aged-15-yrs-over-by-pa-total-gross-monthly-income-from-work-2019-08-08T04-36-01Z.csv'
+    Format: 'CSV'
+    Coverage: '2015-01-01 to 2015-12-31'
+    Last Updated: '2019-08-08T04:36:01.557450'
+    Schema:
+      -
+        Name: 'year'
+        Title: 'Year'
+        Type: 'datetime'
+        Sub Type: 'year'
+        Format: 'YYYY'
+      -
+        Name: 'level_1'
+        Title: 'Gross Monthly Income from Work'
+        Type: 'text'
+        Sub Type: 'general'
+      -
+        Name: 'level_2'
+        Title: 'Planning Area (Total)'
+        Type: 'text'
+        Sub Type: 'general'
+      -
+        Name: 'value'
+        Title: 'Value'
+        Type: 'numeric'
+        Sub Type: 'general'
+        Unit Of Measure: 'Thousands'
+  -
+    Identifier: 'e4c209d3-4a07-426a-baeb-a7026d09241c'
+    Title: 'Resident Working Persons Aged 15 Yrs & Over by PA & Gross Monthly Income
+      From Work'
+    Url: 'https://storage.data.gov.sg/resident-working-persons-aged-15-years-over-by-planning-area-gross-monthly-income-from-work-2015/resources/resident-working-persons-aged-15-yrs-over-by-pa-gross-monthly-income-from-work-2019-08-08T04-36-54Z.csv'
+    Format: 'CSV'
+    Coverage: '2015-01-01 to 2015-12-31'
+    Last Updated: '2019-08-08T04:36:54.366931'
+    Schema:
+      -
+        Name: 'year'
+        Title: 'Year'
+        Type: 'datetime'
+        Sub Type: 'year'
+        Format: 'YYYY'
+      -
+        Name: 'level_1'
+        Title: 'Gross Monthly Income from Work'
+        Type: 'text'
+        Sub Type: 'general'
+      -
+        Name: 'level_2'
+        Title: 'Planning Area (Total)'
+        Type: 'text'
+        Sub Type: 'general'
+      -
+        Name: 'level_3'
+        Title: 'Planning Area'
+        Type: 'text'
+        Sub Type: 'general'
+      -
+        Name: 'value'
+        Title: 'Value'
+        Type: 'numeric'
+        Sub Type: 'general'
+        Unit Of Measure: 'Thousands'

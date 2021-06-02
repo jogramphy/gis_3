@@ -1,0 +1,101 @@
+# Metadata for Resident Population Aged 15 Years and Over by Planning Area and Highest Qualification Attained, 2015
+---
+Identifier: 'f33bfedd-e9ee-43cc-9df0-21be6b147df0'
+Name: 'resident-population-aged-15-years-and-over-by-planning-area-and-highest-qualification-attained-2015'
+Title: 'Resident Population Aged 15 Years and Over by Planning Area and Highest Qualification
+  Attained, 2015'
+Description:
+  - 'From 1995, the General Household Survey (GHS) is conducted in between 2 Population
+    Censuses as a mid-decade mini-Census.'
+  - ''
+  - 'The General Household Survey (GHS) 2015 is the third in the series of mid-decade
+    national survey. It covers a wide range of topics and provides comprehensive data
+    on Singapore’s population and households in between the population censuses that
+    are conducted once in ten years.'
+Topics:
+  - 'Society'
+Keywords:
+  - 'General Household Survey'
+  - 'Highest Qualification Attained'
+  - 'Planning Area'
+  - 'Resident Population Aged 15 Years and Over'
+Publisher:
+  Name: 'Ministry of Trade and Industry - Department of Statistics'
+  Admin 1:
+    Name: 'SingStat Info'
+    Department: 'Statistics Information Services'
+    Email: 'info@singstat.gov.sg'
+Sources:
+  - 'Ministry of Trade and Industry - Department of Statistics'
+Source Url: 'http://www.tablebuilder.singstat.gov.sg/publicfacing/createSpecialTable.action?refId=9141&exportType=csv'
+License: 'https://data.gov.sg/open-data-licence'
+Frequency: 'Other'
+Coverage: '2015-01-01 to 2015-12-31'
+Last Updated: '2020-08-15T05:23:39.405852'
+Resources:
+  -
+    Identifier: 'e5aa33c4-78bd-4b93-9ba3-8246e280d085'
+    Title: 'Resident Population Aged 15 Years and Over by Planning Area(Total) and
+      HQA'
+    Url: 'https://storage.data.gov.sg/resident-population-aged-15-years-and-over-by-planning-area-and-highest-qualification-attained-2015/resources/resident-population-aged-15-years-and-over-by-planning-area-total-and-hqa-2020-08-15T05-23-38Z.csv'
+    Format: 'CSV'
+    Coverage: '2015-01-01 to 2015-12-31'
+    Last Updated: '2020-08-15T05:23:38.560313'
+    Schema:
+      -
+        Name: 'year'
+        Title: 'Year'
+        Type: 'datetime'
+        Sub Type: 'year'
+        Format: 'YYYY'
+      -
+        Name: 'level_1'
+        Title: 'Highest Qualification Attained (HQA)'
+        Type: 'text'
+        Sub Type: 'general'
+      -
+        Name: 'level_2'
+        Title: 'Planning Area (Total)'
+        Type: 'text'
+        Sub Type: 'general'
+      -
+        Name: 'value'
+        Title: 'Value'
+        Type: 'numeric'
+        Sub Type: 'general'
+        Unit Of Measure: 'Thousands'
+  -
+    Identifier: 'a3d02f49-143e-46da-a3a5-454e5b62c490'
+    Title: 'Resident Population Aged 15 Years and Over by Planning Area and HQA'
+    Url: 'https://storage.data.gov.sg/resident-population-aged-15-years-and-over-by-planning-area-and-highest-qualification-attained-2015/resources/resident-population-aged-15-years-and-over-by-planning-area-and-hqa-2018-06-01T08-34-59Z.csv'
+    Format: 'CSV'
+    Coverage: '2015-01-01 to 2015-12-31'
+    Last Updated: '2018-06-01T08:34:59.711788'
+    Schema:
+      -
+        Name: 'year'
+        Title: 'Year'
+        Type: 'datetime'
+        Sub Type: 'year'
+        Format: 'YYYY'
+      -
+        Name: 'level_1'
+        Title: 'Highest Qualification Attained (HQA)'
+        Type: 'text'
+        Sub Type: 'general'
+      -
+        Name: 'level_2'
+        Title: 'Planning Area (Total)'
+        Type: 'text'
+        Sub Type: 'general'
+      -
+        Name: 'level_3'
+        Title: 'Planning Area'
+        Type: 'text'
+        Sub Type: 'general'
+      -
+        Name: 'value'
+        Title: 'Value'
+        Type: 'numeric'
+        Sub Type: 'general'
+        Unit Of Measure: 'Thousands'

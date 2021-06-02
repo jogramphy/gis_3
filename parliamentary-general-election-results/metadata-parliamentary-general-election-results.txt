@@ -1,0 +1,191 @@
+# Metadata for Parliamentary General Election Results
+---
+Identifier: '9fd7b416-2a1e-4039-8b20-7f3146a1260f'
+Name: 'parliamentary-general-election-results'
+Title: 'Parliamentary General Election Results'
+Description:
+  - 'The Singapore Parliament has a term of 5 years but may be dissolved at any time
+    before the expiry of its 5-year term by the President on the advice of the Prime
+    Minister. The general election must be held within 3 months of the dissolution
+    of the Parliament.'
+  - ''
+  - 'There are 2 types of electoral divisions or constituencies in Singapore:'
+  - ''
+  - '* Single Member Constituency (SMC)'
+  - '* Group Representation Constituency (GRC)'
+  - ''
+  - 'Definitions:'
+  - ''
+  - '* A Rejected Vote means a ballot paper which has been handed by the election
+    official to an elector to cast his vote but which, at the close of the poll, has
+    been found in the ballot box unmarked or so improperly marked it cannot be counted.'
+  - '* A Spoilt Ballot Paper means a ballot paper which, on polling day, has not been
+    deposited in the ballot box, but has been found by the election official to be
+    spoilt or improperly printed or which has been handed by the election official
+    to an elector to cast his vote, and (a) has been spoilt in marking by the elector,
+    and (b) has been handed back to the election official and exchanged for another.'
+  - ''
+  - 'More information on the parliamentary elections can be found here:'
+  - ''
+  - '* http://www.eld.gov.sg/elections_parliamentary.html'
+  - '* http://www.eld.gov.sg/elections_type_electoral.html'
+Topics:
+  - 'Society'
+Keywords:
+  - 'Elections'
+  - 'Politics'
+Publisher:
+  Name: 'Prime Minister''s Office - Elections Department'
+  Admin 1:
+    Name: 'Yile Chen'
+    Department: 'Transformation & Data'
+    Email: 'Yile_CHEN@eld.gov.sg'
+  Admin 2:
+    Name: 'Kenny Cheong'
+    Department: 'Transformation & Data'
+    Email: 'kenny_CHEONG@eld.gov.sg'
+Sources:
+  - 'Prime Minister''s Office - Elections Department'
+Source Url: 'http://www.eld.gov.sg/elections_past_parliamentary.html'
+License: 'https://data.gov.sg/open-data-licence'
+Frequency: 'Ad-hoc'
+Coverage: '1955-01-01 to 2020-12-31'
+Last Updated: '2021-03-01T03:48:11.780099'
+Resources:
+  -
+    Identifier: '4706f2cb-a909-4cc0-bd3d-f366c34cf6af'
+    Title: 'Parliamentary General Election Results by Candidate'
+    Url: 'https://storage.data.gov.sg/parliamentary-general-election-results/resources/parliamentary-general-election-results-by-candidate-2021-02-15T02-37-11Z.csv'
+    Format: 'CSV'
+    Coverage: '1955-01-01 to 2020-12-31'
+    Last Updated: '2021-02-15T02:37:11.311136'
+    Schema:
+      -
+        Name: 'year'
+        Title: 'Year'
+        Type: 'datetime'
+        Sub Type: 'year'
+        Format: 'YYYY'
+      -
+        Name: 'constituency'
+        Title: 'Constituency'
+        Type: 'text'
+        Sub Type: 'general'
+      -
+        Name: 'constituency_type'
+        Title: 'Constituency Type'
+        Type: 'text'
+        Sub Type: 'general'
+        Description: '"na" : Data not available or not applicable'
+      -
+        Name: 'candidates'
+        Title: 'Candidates'
+        Type: 'text'
+        Sub Type: 'general'
+        Description: 'For GRCs, candidate names are separated by the pipe character
+          "|".'
+      -
+        Name: 'party'
+        Title: 'Party'
+        Type: 'text'
+        Sub Type: 'general'
+      -
+        Name: 'vote_count'
+        Title: 'Vote Count'
+        Type: 'numeric'
+        Sub Type: 'general'
+        Unit Of Measure: 'No. of Votes'
+        Description: '"na" : Data not available or not applicable'
+      -
+        Name: 'vote_percentage'
+        Title: 'Percentage of Valid Votes'
+        Type: 'numeric'
+        Sub Type: 'percentage'
+        Description:
+          - 'Percentages are expressed as a value over 1, i.e. "1" represents 100%'
+          - '"na" : Data not available or not applicable'
+  -
+    Identifier: '4e5d3f48-c728-4db7-961c-d337b17ecefb'
+    Title: 'Parliamentary General Election Dates'
+    Url: 'https://storage.data.gov.sg/parliamentary-general-election-results/resources/parliamentary-general-election-dates-2016-11-01T07-13-38Z.csv'
+    Format: 'CSV'
+    Coverage: '1955-01-01 to 2015-12-31'
+    Description: 'Details on the general election process can be found here: http://www.eld.gov.sg/elections_parliamentary.html'
+    Last Updated: '2016-11-01T07:13:38.053433'
+    Schema:
+      -
+        Name: 'year'
+        Title: 'Year'
+        Type: 'datetime'
+        Sub Type: 'year'
+        Format: 'YYYY'
+      -
+        Name: 'nomination_day'
+        Title: 'Nomination Day'
+        Type: 'datetime'
+        Sub Type: 'date'
+        Format: 'YYYY-MM-DD'
+      -
+        Name: 'polling_day'
+        Title: 'Polling Day'
+        Type: 'datetime'
+        Sub Type: 'date'
+        Format: 'YYYY-MM-DD'
+  -
+    Identifier: 'f33c3652-ec6a-46e6-9c04-4f5c869d99b2'
+    Title: 'Parliamentary General Election - Registered Electors, Rejected Votes and
+      Spoilt Ballots'
+    Url: 'https://storage.data.gov.sg/parliamentary-general-election-results/resources/parliamentary-general-election-registered-electors-rejected-votes-and-spoilt-ballots-2017-05-31T09-38-34Z.csv'
+    Format: 'CSV'
+    Coverage: '1955-01-01 to 2015-12-31'
+    Last Updated: '2017-05-31T09:38:34.206973'
+    Schema:
+      -
+        Name: 'year'
+        Title: 'Year'
+        Type: 'datetime'
+        Sub Type: 'year'
+        Format: 'YYYY'
+      -
+        Name: 'constituency'
+        Title: 'Constituency'
+        Type: 'text'
+        Sub Type: 'general'
+      -
+        Name: 'no_of_registered_electors'
+        Title: 'No. of Registered Electors'
+        Type: 'numeric'
+        Sub Type: 'general'
+        Unit Of Measure: 'No. of People'
+      -
+        Name: 'no_of_rejected_votes'
+        Title: 'No. of Rejected Votes'
+        Type: 'numeric'
+        Sub Type: 'general'
+        Unit Of Measure: 'No. of Rejected Votes'
+        Description: '"na" : "na" means there was no contest.'
+      -
+        Name: 'no_of_spoilt_ballot_papers'
+        Title: 'No. of Spoilt Ballot Papers'
+        Type: 'numeric'
+        Sub Type: 'general'
+        Unit Of Measure: 'No. of Spoilt Ballot Papers'
+        Description: '"na" : "na" means there was no contest.'
+  -
+    Identifier: '3188cb4c-5a14-4e48-b419-2154d68bd5f4'
+    Title: 'List of Political Parties'
+    Url: 'https://storage.data.gov.sg/parliamentary-general-election-results/resources/list-of-political-parties-2021-02-15T02-50-55Z.csv'
+    Format: 'CSV'
+    Coverage: '1955-01-01 to 2015-12-31'
+    Last Updated: '2021-02-15T02:50:55.395612'
+    Schema:
+      -
+        Name: 'abbreviation'
+        Title: 'Abbreviation'
+        Type: 'text'
+        Sub Type: 'general'
+      -
+        Name: 'political_party'
+        Title: 'Political Party Name'
+        Type: 'text'
+        Sub Type: 'general'
