@@ -1,7 +1,7 @@
 ---
-title: "crosswalk-r"
+title: "GEOG 28602: Final Project"
 author: "Josea Evan"
-date: "5/23/2021"
+date: "6/1/2021"
 output: html_document
 runtime: shiny 
 ---
@@ -154,7 +154,7 @@ crosswalk =
   rename(eld_bounds = Name) %>%
   rename(pln_area = PLN_AREA_N)
 
-crosswalk
+write.csv(crosswalk, file="crosswalk.csv")
 #ELD bounds = electoral bounds
 ```
 
@@ -167,7 +167,6 @@ To use the crosswalk, we first have to load in a relevant dataset. What we will 
 
 ```{r}
 income_pln <- read_csv("data/raw/income.csv")
-income_pln
 ```
 
 
@@ -272,10 +271,6 @@ To generate histograms, we need to "delimit" our eld_income dataset firstly by b
 
 
 ```{r, fig.width=15, fig.height=15}
-#Make yuhua histogram
-
-# selectedbounds = 
-#   tibble(eld_income) %>% filter(eld_bounds == c("PIONEER", "ANG MO KIO"))
 
 ggplot(eld_income, aes(fill=factor(inc_level, levels=rev(inc_levels)), y=pct, x=eld_bounds)) + 
   geom_bar(position="fill", stat="identity") + 
@@ -295,7 +290,6 @@ ggplot(eld_income, aes(fill=factor(inc_level, levels=rev(inc_levels)), y=pct, x=
 We do the same with the education dataset. 
 ```{r}
 edu_pln <- read.csv("data/raw/edu_pln.csv")
-edu_pln
 ```
 
 ```{r}
@@ -414,10 +408,10 @@ eld_data =
   inner_join(join_edu_data, voted_pap, by=c("Name"="constituency")) %>%
   mutate(across(where(is.numeric), round, 2)) #Round values
 
-tibble(eld_data)
-write.csv(eld_data, file="eld_data.csv")
-write.csv(eld_income, file="eld_income.csv")
-write_sf(eld_data, "eld_data.shp")
+# tibble(eld_data)
+# write.csv(eld_data, file="eld_data.csv")
+# write.csv(eld_income, file="eld_income.csv")
+# write_sf(eld_data, "eld_data.shp")
 
 ```
 
