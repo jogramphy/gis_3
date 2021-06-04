@@ -1,9 +1,11 @@
 # Background and Motivation
 
-The 2020 General Election in Singapore was held on July 10 2020, with the ruling People's Action Party (PAP) consolidating its power by winning 83 out of 93 seats available. However, while this seemed like a dominant victory (which it is), there were some close fights; in particular the PAP edged out the opposition at West Coast GRC (Group Representative Constitutency), winning 51.69% of the votes (Rajan et al., 2020) <sup>1<sup>. 
+The 2020 General Election in Singapore was held on July 10 2020, with the ruling People's Action Party (PAP) consolidating its power by winning 83 out of 93 seats available. However, while this seemed like a dominant victory (which it is), there were some close fights; in particular the PAP edged out the opposition at West Coast GRC (Group Representative Constitutency), winning 51.69% of the votes (Rajan et al., 2020) <sup>1<sup>
 
 
-The 2020 elections were not like other elections. Notwithstanding the unusual circumstances of holding an election in the middle of a pandemic, there were other controversies too, like the withdrawal of a PAP member due to allegations of "elitism and arrogant behaviour at work" (Sim & Jaipragas, 2020) <sup>2<sup>. There were more eyeballs than usual on this election, with citizens asking important questions: 
+The 2020 elections were not like other elections. Notwithstanding the unusual circumstances of holding an election in the middle of a pandemic, there were other controversies too, like the withdrawal of a PAP member due to allegations of "elitism and arrogant behaviour at work" (Sim & Jaipragas, 2020) <sup>2<sup> 
+
+There were more eyeballs than usual on this election, with citizens asking important questions: 
   + How did different electoral boundaries vote? 
   + Are there socio-economic factors (like income etc.) that affect these voting patterns? 
 
@@ -50,7 +52,9 @@ Secondly, the Planning Areas map:
 
 ![image](/visualizations/singapore_planning_area_2015.png)
 
-More importantly, what we want to do is to overlay one file on the other and see how it inersects. We follow the example outlined to help us do this, as outlined by Tannen (2021) <sup>3<sup>. We first include some formatting instructions so that we can do the overlaying seamlessly. 
+More importantly, what we want to do is to overlay one file on the other and see how it inersects. We follow the example outlined to help us do this, as outlined by Tannen (2021) <sup>3<sup> 
+
+We first include some formatting instructions so that we can do the overlaying seamlessly. 
 
 ```{r}
 sixtysix_colors <- list(
@@ -130,7 +134,9 @@ The resulting map:
 
 
 ## Crosswalk Formulation 
-A crosswalk is required for us to map data across "different levels of geographical aggregation" (Eckert et al., 2020) <sup>4<sup>. The crosswalk is essentially a list of weights that allows us to transpose data from one geographical aggregation to another. There are two approaches that we can adopt: Areal Weighting, and Population Weighting. 
+A crosswalk is required for us to map data across "different levels of geographical aggregation" (Eckert et al., 2020) <sup>4<sup> 
+
+The crosswalk is essentially a list of weights that allows us to transpose data from one geographical aggregation to another. There are two approaches that we can adopt: Areal Weighting, and Population Weighting. 
 
 **Areal Weighting** involves proportioning values by land area. For example, if 50% of the Jurong electoral boundary is in Planning Area A, we give 50% of Planning Area A's values to Jurong, and regroup all of Jurong's value by sum subsequently.  **Population weighting** involves proportioning values by population of people. We will utilize areal weighting for this project given and considering its context. Singapore as a country is that of high population density - and there really is not an explicit "rural" or "urban" divide that will make population weighting more useful than an areal one. 
 
@@ -602,7 +608,7 @@ shinyApp(
 )
 ```
 
-# Results (if a Dashboard, insert screenshots of key selections)
+# Results
 
 ## Bar Chart Results 
 
@@ -659,10 +665,14 @@ The point of this project was to provide tools for researchers to be able to tra
 
 # Data Sources
 
-[a] https://data.gov.sg/dataset/electoral-boundary_2020  
+[a] https://data.gov.sg/dataset/electoral-boundary_2020 
+
 [b] https://data.gov.sg/dataset/master-plan-2014-planning-area-boundary-web?resource_id=2ab23cb2-b1a4-4b1a-a9e1-b9cad0ac159b 
+
 [c] https://data.gov.sg/dataset/resident-population-aged-15-years-and-over-by-planning-area-and-highest-qualification-attained-2015 
+
 [d] https://data.gov.sg/dataset/resident-working-persons-aged-15-years-over-by-planning-area-gross-monthly-income-from-work-2015 
+
 [e] https://data.gov.sg/dataset/parliamentary-general-election-results 
 
 # Sources 
