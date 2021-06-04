@@ -262,9 +262,7 @@ eld_income
 
 Now that we have the consolidated income data by electoral bounds in the `eld_income` dataframe, we can begin some visualizations of the data. 
 
-First, let us generate some histograms. 
-
-To generate histograms, we need to "delimit" our eld_income dataset firstly by bounds. 
+First, let us generate some bar charts. 
 
 
 ```{r, fig.width=15, fig.height=15}
@@ -599,7 +597,7 @@ shinyApp(
     
   })
 
-  #Generate a Violin Plot of Variables 
+  #Generate a Map Plot of Variables 
   output$incPlot <- renderPlot({
     test_inc = 
       eld_income %>% filter(eld_bounds %in% c(input$selectedCol1, input$selectedCol2))

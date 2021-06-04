@@ -601,7 +601,7 @@ shinyApp(
 This is how the R Shiny App looks like. 
 
 We can select which variables we want to compare: 
-
+![Variable Comparison](/visualizations/income_bar_sample.png)
 
 We can view data on income level. 
 
