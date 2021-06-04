@@ -40,11 +40,11 @@ planning <- st_read("data/planning/MP14_PLNG_AREA_WEB_PL.shp")
 #### Visualizing the Shapefiles
 We map out the initial shapefiles to see what we are working with. We use the `tmap` package to help us do this. First, the Election Boundaries map: 
 
-![image](https://user-images.githubusercontent.com/73069313/120545897-d4674780-c3b4-11eb-93fe-3d6fb2d9df6a.png)
+![image](/visualizations/singapore_ge_2020.png)
 
 Secondly, the Planning Areas map: 
 
-![image](https://user-images.githubusercontent.com/73069313/120546022-fd87d800-c3b4-11eb-9ff8-74a7f85b70a7.png)
+![image](/visualizations/singapore_planning_area_2015.png)
 
 More importantly, what we want to do is to overlay one file on the other and see how it inersects. We follow the example outlined here (https://sixtysixwards.com/home/crosswalk-tutorial/) to help us do this. We first include some formatting instructions so that we can do the overlaying seamlessly. 
 
@@ -122,7 +122,7 @@ ggplot(
 
 The resulting map: 
 
-![image](https://user-images.githubusercontent.com/73069313/120546249-3d4ebf80-c3b5-11eb-8e5c-debed02bb361.png)
+![image](/visualizations/election_planning_overlaid.png)
 
 
 ## Crosswalk Formulation 
@@ -358,7 +358,7 @@ ggplot(eld_income, aes(fill=factor(inc_level, levels=rev(inc_levels)), y=pct, x=
   ylab("Percentage of Population") + labs(fill = "Income Levels") + coord_flip()
 ```
 
-The resulting image is: 
+The image of the bar chart will be shown in the results section below. 
 
 ### Visualizing Education Data
 
@@ -380,7 +380,7 @@ ggplot(eld_edu, aes(fill=factor(edu_level, levels=rev(edu_levels)), y=pct, x=eld
 
 ```
 
-The resulting image is: 
+The image of the bar chart will be shown in the results section below. 
 
 ### Combining Income and Education Data with Voting Data 
 
@@ -414,6 +414,7 @@ income_map =
 tmap_leaflet(income_map, show = TRUE, add.titles=TRUE)
 ```
 This gives us this income map: 
+![Income Leaflet](/visualizations/income_map_sample.png)
 
 For education, the same code with slight modifications: 
 ```{r}
@@ -435,6 +436,8 @@ edu_map =
 tmap_leaflet(edu_map, show = TRUE, add.titles=TRUE)
 ```
 This gives us this education map:
+![Education Leaflet](/visualizations/education_map_sample.png)
+
 
 ## R Shiny Development 
 
@@ -598,16 +601,34 @@ shinyApp(
 
 # Results (if a Dashboard, insert screenshots of key selections)
 
-This is how the R Shiny App looks like. 
+## Bar Chart Results 
 
-We can select which variables we want to compare: 
-![Variable Comparison](/visualizations/income_bar_sample.png)
+We initially plotted bar charts that allowed comparison of income levels across all electoral boundaries. For income, we see the bar chart comparison of income in this figure:
+![Income_bar_chart](/visualizations/income_charts.png) 
 
-We can view data on income level. 
+For education levels, we see this stacked bar chart as shown below: 
+![Edu-bar-chart](/visualizations/edu_charts.png)
 
-We can view data on education level. 
+## R Shiny Sample 
 
-We can view the maps, with the popup that highlights income/education level against percentage voted for the People's Action Party. 
+This is how the R Shiny App looks like. You see on the left sidebar, there are drop down menus that allow you to select which variables to compare. Clicking on the dropdown generates a view such as this: 
+![Drop Down](/visualizations/drop_down.png)
+
+Selecting two different boundaries will generate a side by side bar chart that allows you to compare education, and income data by percentage on the electoral boundary level. 
+
+There are tabs on the main panel that you can click through. The first tab lets you compare income:
+![Income Comparison](/visualizations/income_bar_sample.png)
+
+The second tab lets you compare education levels:
+![Education Comparison](/visualizations/edu_bar_sample.png)
+
+The third tab lets you compare the maps of income and education data (you select income or education from the side panel). The generated map is interactive, with the popup that highlights income/education level against percentage voted for the People's Action Party. 
+
+Income Map:
+![Income Map](/visualizations/income_sample.png)
+
+Education Map:
+![Education Map](/visualizations/edu_sample.png)
 
 # Discussion of Results/Findings/Main Highlights
 
