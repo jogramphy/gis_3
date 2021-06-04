@@ -1,12 +1,11 @@
 # Background and Motivation
 
-The 2020 General Election in Singapore was held amidst the COVID-19 pandemic, with the ruling People's Action Party consolidating its power by winning 83 out of 93 seats available. However, while this seemed like a dominant victory (which it is), there were some close fights; in particular the PAP edged out the opposition at West Coast GRC (Group Representative Constitutency), winning 51.69% of the votes <sup>1<>sup>. 
+The 2020 General Election in Singapore was held on July 10 2020, with the ruling People's Action Party (PAP) consolidating its power by winning 83 out of 93 seats available. However, while this seemed like a dominant victory (which it is), there were some close fights; in particular the PAP edged out the opposition at West Coast GRC (Group Representative Constitutency), winning 51.69% of the votes (Rajan et al., 2020) <sup>1<sup>. 
 
 
-a landslide victory for the ruling People’s Action Party (PAP), which consolidated its political power by winning 83 out of 89 seats contested. This was a stark contrast to the 2011 General Elections, where it only attained 60% of all the votes — marking it the party’s worst ever performance since the country’s independence. 
-
-
-This raised a few questions within the country: How did different electoral boundaries vote? Are there socio-economic factors (like income etc.) that affect these voting patterns? 
+The 2020 elections were not like other elections. Notwithstanding the unusual circumstances of holding an election in the middle of a pandemic, there were other controversies too, like the withdrawal of a PAP member due to allegations of "elitism and arrogant behaviour at work" (Sim & Jaipragas, 2020) <sup>2<sup>. There were more eyeballs than usual on this election, with citizens asking important questions: 
+  + How did different electoral boundaries vote? 
+  + Are there socio-economic factors (like income etc.) that affect these voting patterns? 
 
 The first question is easy to answer - the Singaporean government publishes electoral data very publically. However, the second is much harder to answer. Singapore does not publicize or share data categorized by electoral boundaries. Unlike American census data where one can aggregate tract level data to state level and visualize on a map election patterns across the country, Singapore does not have a similar data synthesis process. By virtue of being a city-state, the country is split into ‘planning areas’ by the Urban Redevelopment Authority (URA). Census information is collected at the planning area level, but these planning areas are not congruent with the electoral boundaries set in place by the Elections Department (ELD). This leads to our inability to map out differences in indicators across electoral boundaries. 
 
@@ -18,27 +17,25 @@ I am interested in examining the spatial distribution of income and education wi
 
 Underlying the above goals and objectives, fundamental to the project is to develop a framework to transpose the electoral boundaries to the boundaries of the Singapore Planning Areas. Developing such a framework will allow us to examine changes of electoral boundaries, the associated indicators across more dimensions such as time. The output for this will be a `crosswalk.csv` file that will allow future researchers to utilize. 
 
-# Data Sources, Spatial and Temporal Scale
+# Data Sources
 
-| Dataset Name      | File Type | Direct Link      | 
+| Dataset Name      | File Type | Source      | 
 | ----------- | ----------- | ----------- |
-| Electoral Boundary 2020      | KMZ       | https://data.gov.sg/dataset/electoral-boundary_2020       |
-| Master Plan 2014 Planning Area Boundary   | SHP        | https://data.gov.sg/dataset/master-plan-2014-planning-area-boundary-web?resource_id=2ab23cb2-b1a4-4b1a-a9e1-b9cad0ac159b |
-| Resident Population Aged 15 Years and Over by Planning Area and Highest Qualification Attained, 2015 | CSV       | https://data.gov.sg/dataset/resident-population-aged-15-years-and-over-by-planning-area-and-highest-qualification-attained-2015 |
-| Resident Working Persons Aged 15 Years and Over by Planning Area and Gross Monthly Income from Work, 2015 | CSV       | https://data.gov.sg/dataset/resident-working-persons-aged-15-years-over-by-planning-area-gross-monthly-income-from-work-2015 |
-| Parliamentary General Election Results, 2020 | CSV       | https://data.gov.sg/dataset/parliamentary-general-election-results |
+| Electoral Boundary 2020 <sup>a<sup>     | KMZ       | https://data.gov.sg/dataset/electoral-boundary_2020       |
+| Master Plan 2014 Planning Area Boundary <sup>b<sup>  | SHP        | https://data.gov.sg/dataset/master-plan-2014-planning-area-boundary-web?resource_id=2ab23cb2-b1a4-4b1a-a9e1-b9cad0ac159b |
+| Resident Population Aged 15 Years and Over by Planning Area and Highest Qualification Attained, 2015 <sup>c<sup> | CSV       | https://data.gov.sg/dataset/resident-population-aged-15-years-and-over-by-planning-area-and-highest-qualification-attained-2015 |
+| Resident Working Persons Aged 15 Years and Over by Planning Area and Gross Monthly Income from Work, 2015 <sup>d<sup>| CSV       | https://data.gov.sg/dataset/resident-working-persons-aged-15-years-over-by-planning-area-gross-monthly-income-from-work-2015 |
+| Parliamentary General Election Results, 2020 <sup>e<sup>| CSV       | https://data.gov.sg/dataset/parliamentary-general-election-results |
 
-We use the 2015 Planning Area data, comparing it against results from the 2020 
+We use the 2015 Planning Area data, comparing it against results from the 2020 General Elections. More specifically, the data in 2015 is taken from the General Household Survey, which is conducted between 2 population censuses as a mid-decade census. We do not use 2020 data because it is not available yet, and that citizens in 2020 vote based on the reality of the past few years, and not on the 'latest available data', strictly speaking. 
 
 
-# Methods Used (be explicit) 
+# Methods Used 
 
-## ETL Framework 
-
-### Extract 
+## Extract, Transform, Load 
 
 #### Loading the Shapefiles into our Environment
-We first want to extract and load the relevant datasets to our environment. Some of our files are in SHP, and some of them are in KMZ - we intend to standardize everything to SHP files. Due to the nature of our `gdal` installation, we are unable to read .kmz files, according to https://mitchellgritts.com/posts/load-kml-and-kmz-files-into-r/. We utilize https://mygeodata.cloud (an open source platform) to help us convert the data from kmz to shp for easier crosswalking calculations. 
+We first want to extract and load the relevant datasets to our environment. Some of our files are in SHP, and some of them are in KMZ - we intend to standardize everything to SHP files. Due to the nature of our `gdal` installation, we are unable to read .kmz files. We utilize https://mygeodata.cloud (an open source platform) to help us convert the data from kmz to shp for easier crosswalking calculations. 
 
 ```{r }
 eld <- st_read("data/elections/eld.shp") # Electoral Boundaries File
@@ -53,7 +50,7 @@ Secondly, the Planning Areas map:
 
 ![image](/visualizations/singapore_planning_area_2015.png)
 
-More importantly, what we want to do is to overlay one file on the other and see how it inersects. We follow the example outlined here (https://sixtysixwards.com/home/crosswalk-tutorial/) to help us do this. We first include some formatting instructions so that we can do the overlaying seamlessly. 
+More importantly, what we want to do is to overlay one file on the other and see how it inersects. We follow the example outlined to help us do this, as outlined by Tannen (2021) <sup>3<sup>. We first include some formatting instructions so that we can do the overlaying seamlessly. 
 
 ```{r}
 sixtysix_colors <- list(
@@ -133,7 +130,7 @@ The resulting map:
 
 
 ## Crosswalk Formulation 
-A crosswalk is required for us to map data across "different levels of geographical aggregation". The crosswalk is essentially a list of weights that allows us to transpose data from one geographical aggregation to another. There are two approaches that we can adopt: Areal Weighting, and Population Weighting. 
+A crosswalk is required for us to map data across "different levels of geographical aggregation" (Eckert et al., 2020) <sup>4<sup>. The crosswalk is essentially a list of weights that allows us to transpose data from one geographical aggregation to another. There are two approaches that we can adopt: Areal Weighting, and Population Weighting. 
 
 **Areal Weighting** involves proportioning values by land area. For example, if 50% of the Jurong electoral boundary is in Planning Area A, we give 50% of Planning Area A's values to Jurong, and regroup all of Jurong's value by sum subsequently.  **Population weighting** involves proportioning values by population of people. We will utilize areal weighting for this project given and considering its context. Singapore as a country is that of high population density - and there really is not an explicit "rural" or "urban" divide that will make population weighting more useful than an areal one. 
 
@@ -445,7 +442,6 @@ tmap_leaflet(edu_map, show = TRUE, add.titles=TRUE)
 This gives us this education map:
 ![Education Leaflet](/visualizations/education_map_sample.png)
 
-
 ## R Shiny Development 
 
 We take the visualizations a step further by creating an R Shiny app that allows us to view the data in a centralized fashion. The R Shiny App should allow us to compare data in an interactive manner at the electoral boundary level between electoral boundaries. The file can be found in `shiny_gis3.R`, but it is embedded inline in the `crosswalk-r.rmd` file. The code is replicated below: 
@@ -661,4 +657,25 @@ In terms of future work, the future is bright. I am personally interested in fle
 
 The point of this project was to provide tools for researchers to be able to transpose Singaporean planning area data to electoral boundary levels, which we have attained via the crosswalk. It is ultimately in our best interest that with such data available at that granularity, we can increase civic-political engagement by allowing locals to "interact" with our R Shiny dashboard, to allow them to get a better sense of the 'metrics' that define their place and immediate community. 
 
+# Data Sources
 
+[a] https://data.gov.sg/dataset/electoral-boundary_2020  
+[b] https://data.gov.sg/dataset/master-plan-2014-planning-area-boundary-web?resource_id=2ab23cb2-b1a4-4b1a-a9e1-b9cad0ac159b 
+[c] https://data.gov.sg/dataset/resident-population-aged-15-years-and-over-by-planning-area-and-highest-qualification-attained-2015 
+[d] https://data.gov.sg/dataset/resident-working-persons-aged-15-years-over-by-planning-area-gross-monthly-income-from-work-2015 
+[e] https://data.gov.sg/dataset/parliamentary-general-election-results 
+
+# Sources 
+[1] Rajan, S. T., Zhang, L. M., & Koh, F. (2020, September 2). GE2020 official results: PAP retains West Coast GRC with 51.69% of votes against Tan Cheng Bock's PSP. The Straits Times. https://www.straitstimes.com/politics/ge2020-sample-count-results-pap-leads-with-52-of-votes-in-west-coast-grc-against-tan-cheng. 
+
+[2] Sim, D., & Jaipragas, B. (2020, June 27). PAP drops Ivan Lim as Singapore election candidate amid online backlash. South China Morning Post. https://www.scmp.com/week-asia/politics/article/3090873/online-backlash-forces-singapores-pap-drop-ivan-lim-election. 
+
+[3] Tannen, J. (2021, March 2). R Tutorial: How I crosswalk Philadelphia's election data. sixtysixwards. https://sixtysixwards.com/home/crosswalk-tutorial/. 
+
+[4] Eckert, F., Gvirtz, A., Liang, J., & Peters, M. (2020, February). A Method to Construct Geographical Crosswalks with an Application to US Counties since 1790. NBER Working Paper #26770, 2020. https://www.fpeckert.me/eglp/.
+
+# License 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+# Contact
+Please direct all questions about the project to josea [at] uchicago [dot] edu.
