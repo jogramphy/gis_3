@@ -616,11 +616,13 @@ This is how the R Shiny App looks like. You see on the left sidebar, there are d
 
 Selecting two different boundaries will generate a side by side bar chart that allows you to compare education, and income data by percentage on the electoral boundary level. 
 
-There are tabs on the main panel that you can click through. The first tab lets you compare income:
-![Income Comparison](/visualizations/income_bar_sample.png)
+There are tabs on the main panel that you can click through. 
 
-The second tab lets you compare education levels:
+The first tab lets you compare education levels:
 ![Education Comparison](/visualizations/edu_bar_sample.png)
+
+The second tab lets you compare income:
+![Income Comparison](/visualizations/income_bar_sample.png)
 
 The third tab lets you compare the maps of income and education data (you select income or education from the side panel). The generated map is interactive, with the popup that highlights income/education level against percentage voted for the People's Action Party. 
 
@@ -630,8 +632,26 @@ Income Map:
 Education Map:
 ![Education Map](/visualizations/edu_sample.png)
 
-# Discussion of Results/Findings/Main Highlights
+# Main Highlights
+
+The results of this project are three fold. First, we have successfully produced a crosswalk file, in the form of the `crosswalk.csv` file, avaiable in this respository. The csv file allows other users to be able to project planning area data (which is how most data is stored in the data.gov website) to electoral boundary level data. This will help us understand variations at local electoral boundary levels, with a potential expansion to understanding how crucial indicators like income affect voting patterns within Singaporean electoral boundaries. This is **important** because such data was previously not available, for one reason or the other. 
+
+Secondly, we have also successfully produced charts that compare income and education across electoral boundaries, as shown in the previous results section. By comparing all 31 electoral bounds against each other, we are able to get a big picture perspective on income and educational equity in Singapore, and how it may potentially vary. An observation I found from this is that areas with the highest percentage of high income (> $12,000) typically have higher education attainments too, such as the `HOLLAND-BUKIT TIMAH` constituency. However, I must note that the point of the project is not necessarily to make conjectures about how income/education may affect voting patterns. The chart and crosswalk are merely tools that can allow future researchers to reach a conclusion on voting patterns if desired. Any such insight now will be jumping to conclusions. 
+
+Lastly, the R Shiny dashboard is extremely useful in terms of engaging individual Singaporeans to find out more about insights from their constituency. Typical Singaporeans will struggle to know what "Planning Area" they are a part of (such information is not really publically available unless one goes onto the data.gov portal to view the map boundaries manually). However, all adult Singaporeans know which constituency they are voting in, and thus can interactively look for data and link it to their immediate place or community. 
 
 # Limitations, Future Work, Conclusion
+
+The main limitation of this project is the fact that the crosswalk model can potentially be improved. In the methods section, we initially mentioned that we used an **areal weighting** method to construct intersection weights, instead of **population weighting**. There is a case to be made that a hybrid method that incorporates both (possibly by a set of weights) will be more rigorous than a strictly areal approach to constructing the crosswalk. 
+
+Another limitation of this project is that visualizations on the map level were limited by the capabilities of R Shiny. It was initially in our interest to construct bar charts within the popups that show indiviudal electoral bounds's income/education data, but it was not possible in R. This is something that might be developed in future iterations of this project. 
+
+In terms of future work, the future is bright. I am personally interested in fleshing out this project, in a few ways: 
++ Including different forms of data other than income and education data
++ Increasing the amount of visualization available (e.g. including bar charts within pop-ups)
++ Conducting statistical analysis of voting patterns based on a basket of variables
++ Identifying how variables change across temporal time (perhaps with the inclusion of a slider that can scroll through a timeline)
+
+The point of this project was to provide tools for researchers to be able to transpose Singaporean planning area data to electoral boundary levels, which we have attained via the crosswalk. It is ultimately in our best interest that with such data available at that granularity, we can increase civic-political engagement by allowing locals to "interact" with our R Shiny dashboard, to allow them to get a better sense of the 'metrics' that define their place and immediate community. 
 
 
