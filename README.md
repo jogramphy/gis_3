@@ -5,7 +5,7 @@ The 2020 General Election in Singapore was held on July 10 2020, with the ruling
 
 The 2020 elections were not like other elections. Notwithstanding the unusual circumstances of holding an election in the middle of a pandemic, there were other controversies too, like the withdrawal of a PAP member due to allegations of "elitism and arrogant behaviour at work" (Sim & Jaipragas, 2020) <sup>2<sup> 
 
-There were more eyeballs than usual on this election, with citizens asking important questions: 
+This led to more eyeballs than usual on this election, with citizens asking important questions: 
   + How did different electoral boundaries vote? 
   + Are there socio-economic factors (like income etc.) that affect these voting patterns? 
 
